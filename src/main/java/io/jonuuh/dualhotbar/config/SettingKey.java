@@ -1,0 +1,12 @@
+package io.jonuuh.dualhotbar.config;
+
+public enum SettingKey
+{
+    ENABLED,
+    ACTION_DELAY,
+    MAIN_HUD_RAISE_AMOUNT,
+    SECONDARY_HOTBAR_SCALE,
+    DRAW_INVENTORY_DURING_SWAP,
+    COMBINE_SIMILAR_ITEMSTACKS,
+    SECONDARY_HOTBAR_INVENTORY_ROW;
+}

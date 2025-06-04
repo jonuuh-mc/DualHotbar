@@ -1,0 +1,153 @@
+buildscript {
+    repositories {
+        maven { url "https://maven.minecraftforge.net" }
+        maven { url 'https://repo.spongepowered.org/maven' }
+    }
+    dependencies {
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
+        classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+    }
+}
+
+plugins {
+    id "com.github.johnrengelman.shadow" version "2.0.4"
+    id "java"
+}
+
+apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: 'org.spongepowered.mixin'
+
+version = "1.0.0-beta" // Mod version
+group = "io.jonuuh.dualhotbar" // Match with src/main/java -> child dir
+archivesBaseName = "DualHotbar-1.8.9" // Name of compiled jar on build.
+
+sourceCompatibility = targetCompatibility = 1.8 // Java version to compile for.
+compileJava.options.encoding = "UTF-8" // Make sure that the encoding is set to UTF-8, so we have no encoding issues.
+
+minecraft {
+    version = "1.8.9-11.15.1.2318-1.8.9" // Version 1.8.9
+    runDir = "run"
+    // Where to put the forge run data (mods, configs, etc.), in a normal mc installation this is .minecraft
+    mappings = "stable_22" // MCP/Forge mappings for 1.8.9 (mc src deobfuscation)
+    makeObfSourceJar = false // Disables the creation of a source jar
+}
+
+//jar {
+//    sourceSets {
+//        main {
+//            java {
+//                exclude '**/assets/core/**'
+//            }
+//        }
+//    }
+//}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // Replaces version in mcmod.info with the project version.
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+        expand "version": project.version, "mcversion": project.minecraft.version // replace version and mcversion
+    }
+
+    // Copies all other resources.
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+}
+
+// SpongePowered and Core library repos
+repositories {
+    maven {
+        url "https://maven.pkg.github.com/jonuuh-mc/Core"
+        credentials {
+            username = GH_ACTOR
+            password = GHP_TOKEN
+        }
+    }
+    maven {
+        url 'https://repo.spongepowered.org/maven/'
+    }
+}
+
+// TODO: can this be combined with lower dependencies block?
+dependencies {
+    implementation "io.jonuuh:core-1.8.9:0.0.1"
+}
+
+// This is the configuration for the shadow plugin, which is used to add libraries to the jar.
+configurations {
+    shade
+    compile.extendsFrom(shade)
+}
+
+// This is the configuration for the shadow plugin, which is used to add libraries to the jar.
+shadowJar {
+    dependencies {
+//        exclude 'io/jonuuh/core/local/**'
+        exclude 'assets/core/**'
+        exclude 'io/jonuuh/core/lib/gui/**'
+        exclude 'io/jonuuh/core/lib/update/**'
+    }
+    configurations = [project.configurations.shade] // Adds the gradle configuration "shade" so we can use it.
+    duplicatesStrategy DuplicatesStrategy.EXCLUDE // Prevents duplicates
+    classifier ""
+}
+
+/**
+ * This is where we bundle libraries into the jar.
+ * shade -> bundles the library into the jar
+ * compile -> library only available at compile time (not accessible at runtime)
+ */
+dependencies {
+    shade("io.jonuuh:core-1.8.9:0.0.1") {}
+
+    shade('org.spongepowered:mixin:0.7.10-SNAPSHOT') {
+        exclude module: 'launchwrapper'
+        exclude module: 'guava'
+        exclude module: 'gson'
+        exclude module: 'commons-io'
+        exclude module: 'log4j-core'
+    }
+}
+
+reobf {
+    // Reobfuscates the jar.
+    shadowJar {}
+}
+
+/**
+ * Adds the manifest values
+ * FMLCorePlugin -> Put the Mixin Loader here
+ * ModSide -> Client or Server
+ * TweakClass -> Mixin tweaker
+ * MixinConfigs -> Put your mixin config here (mixins.MODID.json)
+ */
+jar {
+    manifest.attributes(
+            "FMLCorePlugin": "io.jonuuh.dualhotbar.mixin.DualHotbarMixinLoader",
+            "ForceLoadAsMod": true,
+            "TweakOrder": 0,
+            "ModSide": "CLIENT",
+            'FMLCorePluginContainsFMLMod': true,
+            'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+            'MixinConfigs': 'mixins.dualhotbar.json'
+    )
+}
+
+// This adds the refmap.
+sourceSets {
+    main {
+        ext.refMap = "mixins.dualhotbar.refmap.json"
+    }
+}
+
+// Task that will build the mod and put it in the "run" folder, and then run the client.
+task buildCopyToRunModsAndRun(type: Copy, dependsOn: 'build') {
+    from "build/libs"
+    into "run/mods"
+    include "*.jar"
+}
+buildCopyToRunModsAndRun.finalizedBy runClient

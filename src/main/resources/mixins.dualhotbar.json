@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.7",
+  "package": "io.jonuuh.dualhotbar.mixin",
+  "refmap": "mixins.dualhotbar.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "mixinPriority": 1001,
+  "client": [
+    "MixinGuiIngame",
+    "MixinGuiIngameForge",
+    "MixinKeyBinding",
+    "MixinMinecraft"
+  ]
+}

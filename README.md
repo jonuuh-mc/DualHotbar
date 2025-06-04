@@ -1,0 +1,6 @@
+## DualHotbar
+
+Uses an inventory row as a second hotbar below the normal hotbar.
+- Press and hold the keybind to switch the selected hotbar to secondary, then select an item to swap with the current slot in the normal hotbar, then release the keybind to perform the swap.
+- If on multiplayer, there SHOULD be a delay between phases of a swap action (open inv, perform actual swap, close inv), otherwise inventory management anticheats may flag and/or ban.
+- Original idea for this mod is from https://github.com/DenWav/ExtendedHotbar
