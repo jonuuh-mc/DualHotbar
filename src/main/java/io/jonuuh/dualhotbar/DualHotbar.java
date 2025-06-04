@@ -10,7 +10,7 @@ import io.jonuuh.dualhotbar.config.CommandDualHotbar;
 import io.jonuuh.dualhotbar.config.SettingKey;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
 import io.jonuuh.dualhotbar.event.GameOverlayStatusBarsModifier;
-import io.jonuuh.dualhotbar.event.SwapHandler;
+import io.jonuuh.dualhotbar.event.SwapKeyListener;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,7 +40,7 @@ public class DualHotbar
         ClientCommandHandler.instance.registerCommand(new CommandDualHotbar());
 
         MinecraftForge.EVENT_BUS.register(new GameOverlayStatusBarsModifier());
-        MinecraftForge.EVENT_BUS.register(new SwapHandler());
+        MinecraftForge.EVENT_BUS.register(new SwapKeyListener());
 
     }
 

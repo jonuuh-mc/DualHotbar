@@ -1,6 +1,5 @@
 package io.jonuuh.dualhotbar.event;
 
-import io.jonuuh.core.lib.util.ChatLogger;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -9,16 +8,13 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
 import org.lwjgl.input.Keyboard;
 
-/**
- * TODO: split into two classes? e.g. SwapKeyListener & SwapActionHandler
- */
-public class SwapHandler
+public class SwapKeyListener
 {
     private final Minecraft mc;
     private final KeyBinding switchHotbarKeybinding;
     private boolean isInitialKeyPress;
 
-    public SwapHandler()
+    public SwapKeyListener()
     {
         this.mc = Minecraft.getMinecraft();
         this.switchHotbarKeybinding = SharedMixinFields.switchHotbarKeybinding;
