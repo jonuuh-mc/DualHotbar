@@ -56,8 +56,15 @@ public class SwapKeyListener
                 // Necessary because of a weird workaround to using a @Redirect for hotbar hotkeying in MixinMinecraft
                 mc.thePlayer.inventory.currentItem = SharedMixinFields.mainHotbarStartingIndex;
 
-                SharedMixinFields.currentSwapAction = new SwapAction();
-                MinecraftForge.EVENT_BUS.register(new SwapActionHandler());
+                int inventoryStackSlotID = (9 * SharedMixinFields.getSecondaryHotbarInventoryRow()) + SharedMixinFields.secondaryHotbarCurrentIndex;
+                ItemStack inventoryStack = mc.thePlayer.inventory.mainInventory[inventoryStackSlotID];
+                ItemStack hotbarStack = mc.thePlayer.getHeldItem();
+
+                if (inventoryStack != null || hotbarStack != null)
+                {
+                    SharedMixinFields.currentSwapAction = new SwapAction();
+                    MinecraftForge.EVENT_BUS.register(new SwapActionHandler());
+                }
             }
         }
     }
