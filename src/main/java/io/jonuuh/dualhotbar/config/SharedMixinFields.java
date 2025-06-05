@@ -4,6 +4,7 @@ import io.jonuuh.core.lib.config.SettingsConfigurationAdapter;
 import io.jonuuh.core.lib.config.setting.Settings;
 import io.jonuuh.dualhotbar.DualHotbar;
 import io.jonuuh.dualhotbar.event.SwapAction;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
@@ -26,6 +27,23 @@ public final class SharedMixinFields
     public static SwapAction currentSwapAction;
     public static int secondaryHotbarCurrentIndex;
     public static int mainHotbarStartingIndex;
+
+    public static boolean isDualHotbarEnabled()
+    {
+        Minecraft mc = Minecraft.getMinecraft();
+
+        if (mc.playerController.isSpectator() || mc.playerController.isInCreativeMode())
+        {
+            return false;
+        }
+
+        if (SettingsConfigurationAdapter.INSTANCE != null)
+        {
+            Settings defaultSettings = SettingsConfigurationAdapter.INSTANCE.getDefaultCategorySettings();
+            return defaultSettings.getBoolSetting(SettingKey.ENABLED).getCurrentValue();
+        }
+        return false;
+    }
 
     public static int getHudRaiseAmount()
     {

@@ -26,11 +26,6 @@ public class SwapAction
         return hasNextPhase;
     }
 
-    public int getPhase()
-    {
-        return phase;
-    }
-
     public void performNextPhase()
     {
         if (!hasNextPhase())

@@ -13,31 +13,15 @@ public class GameOverlayStatusBarsModifier
     @SubscribeEvent
     public void onRenderGameOverlay(RenderGameOverlayEvent.Pre event)
     {
+        if (!SharedMixinFields.isDualHotbarEnabled())
+        {
+            return;
+        }
+
         if (event.type == RenderGameOverlayEvent.ElementType.ALL)
         {
-//            if (SharedMixinFields.switchHotbarKeybinding.isKeyDown())
-//            {
-//                System.out.println("right clicking");
-//                KeyBinding.onTick(Minecraft.getMinecraft().gameSettings.keyBindUseItem.getKeyCode());
-//            }
-
             GuiIngameForge.left_height += SharedMixinFields.getHudRaiseAmount();
             GuiIngameForge.right_height += SharedMixinFields.getHudRaiseAmount();
         }
     }
-
-//    @SubscribeEvent
-//    public void onClientTick(TickEvent.ClientTickEvent event)
-//    {
-//        if (event.phase == TickEvent.Phase.START)
-//        {
-//            return;
-//        }
-//
-//        if (SharedMixinFields.switchHotbarKeybinding.isKeyDown())
-//        {
-//            System.out.println("right clicking");
-//            KeyBinding.onTick(Minecraft.getMinecraft().gameSettings.keyBindUseItem.getKeyCode());
-//        }
-//    }
 }

@@ -2,7 +2,7 @@
     {
         "modid": "dualhotbar",
         "name": "DualHotbar",
-        "description": "Uses an inventory row as a second hotbar below the normal hotbar.\nPress and hold the keybind to switch the selected hotbar to secondary, then select an item to swap with the current slot in the normal hotbar, then release the keybind to perform the swap.\nIf on multiplayer, there SHOULD be a delay between phases of a swap action (open inv, perform actual swap, close inv), otherwise inventory anticheats may flag and/or ban.\n\n(Mostly a note to self: Because the client and server both have synced 'copies' of your inventory, opening/closing inventory and moving items around will send packets to the server, therefore packets being sent too fast or in a constant pattern can be detected as a cheat.)",
+        "description": "Uses an inventory row as a second hotbar below the normal hotbar.\nPress and hold the keybind to switch the selected hotbar to secondary, then select an item to swap with the current slot in the normal hotbar, then release the keybind to perform the swap.\nIf on multiplayer, there SHOULD be a delay between phases of a swap action (open inv, perform actual swap, close inv), otherwise inventory management anticheats may flag and/or ban.\n\n(Mostly a note to self: Because the client and server both have synced 'copies' of your inventory, opening/closing inventory and moving items around will send packets to the server, therefore packets being sent too fast or in a constant pattern can be detected as a cheat.)",
         "version": "${version}",
         "mcversion": "${mcversion}",
         "url": "",

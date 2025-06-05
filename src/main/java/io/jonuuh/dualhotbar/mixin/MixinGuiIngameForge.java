@@ -22,7 +22,7 @@ public abstract class MixinGuiIngameForge extends GuiIngame
     )
     private int dualhotbar$raiseExpBar(int y)
     {
-        return y - SharedMixinFields.getHudRaiseAmount();
+        return SharedMixinFields.isDualHotbarEnabled() ? y - SharedMixinFields.getHudRaiseAmount() : y;
     }
 
     @ModifyArg(
@@ -32,7 +32,7 @@ public abstract class MixinGuiIngameForge extends GuiIngame
     )
     private int dualhotbar$raiseExpString(int y)
     {
-        return y - SharedMixinFields.getHudRaiseAmount();
+        return SharedMixinFields.isDualHotbarEnabled() ? y - SharedMixinFields.getHudRaiseAmount() : y;
     }
 
     @ModifyArg(method = "renderToolHightlight",
@@ -41,7 +41,7 @@ public abstract class MixinGuiIngameForge extends GuiIngame
     )
     private float dualhotbar$raiseHeldItemText(float y)
     {
-        return y - SharedMixinFields.getHudRaiseAmount();
+        return SharedMixinFields.isDualHotbarEnabled() ? y - SharedMixinFields.getHudRaiseAmount() : y;
     }
 
     @ModifyArg(method = "renderRecordOverlay",
@@ -50,6 +50,6 @@ public abstract class MixinGuiIngameForge extends GuiIngame
     )
     private int dualhotbar$raiseRecordOverlayText(int y)
     {
-        return y - SharedMixinFields.getHudRaiseAmount();
+        return SharedMixinFields.isDualHotbarEnabled() ? y - SharedMixinFields.getHudRaiseAmount() : y;
     }
 }

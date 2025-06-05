@@ -3,6 +3,7 @@ package io.jonuuh.dualhotbar.event;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
@@ -24,7 +25,7 @@ public class SwapKeyListener
     @SubscribeEvent
     public void onKeyInput(KeyInputEvent event)
     {
-        if (mc.playerController.isSpectator() || mc.playerController.isInCreativeMode())
+        if (!SharedMixinFields.isDualHotbarEnabled())
         {
             return;
         }
@@ -44,16 +45,13 @@ public class SwapKeyListener
             {
                 if (isInitialKeyPress)
                 {
-//                    ChatLogger.INSTANCE.addSuccessLog("DOWN: " + Keyboard.getKeyName(switchHotbarKeybinding.getKeyCode()));
                     isInitialKeyPress = false;
-
                     SharedMixinFields.mainHotbarStartingIndex = mc.thePlayer.inventory.currentItem;
                     SharedMixinFields.secondaryHotbarCurrentIndex = mc.thePlayer.inventory.currentItem;
                 }
             }
             else
             {
-//                ChatLogger.INSTANCE.addSuccessLog("UP: " + Keyboard.getKeyName(switchHotbarKeybinding.getKeyCode()));
                 isInitialKeyPress = true;
                 // Necessary because of a weird workaround to using a @Redirect for hotbar hotkeying in MixinMinecraft
                 mc.thePlayer.inventory.currentItem = SharedMixinFields.mainHotbarStartingIndex;

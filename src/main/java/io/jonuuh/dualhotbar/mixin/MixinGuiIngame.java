@@ -1,7 +1,6 @@
 package io.jonuuh.dualhotbar.mixin;
 
 import io.jonuuh.core.lib.util.RenderUtils;
-import io.jonuuh.dualhotbar.DualHotbar;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -40,7 +39,7 @@ public abstract class MixinGuiIngame extends Gui
     @Inject(method = "renderTooltip", at = @At(value = "TAIL"))
     private void dualhotbar$renderSecondHotbar(ScaledResolution sr, float partialTicks, CallbackInfo ci)
     {
-        if (mc.getRenderViewEntity() instanceof EntityPlayer)
+        if (SharedMixinFields.isDualHotbarEnabled() && mc.getRenderViewEntity() instanceof EntityPlayer)
         {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             mc.getTextureManager().bindTexture(widgetsTexPath);
@@ -108,6 +107,12 @@ public abstract class MixinGuiIngame extends Gui
     )
     private void dualhotbar$makeRenderingSelectedHotbarSlotConditional(GuiIngame instance, int x, int y, int textureX, int textureY, int width, int height)
     {
+        if (!SharedMixinFields.isDualHotbarEnabled())
+        {
+            drawTexturedModalRect(x, y, textureX, textureY, width, height);
+            return;
+        }
+
         if (!SharedMixinFields.switchHotbarKeybinding.isKeyDown())
         {
             drawTexturedModalRect(x, y - SharedMixinFields.getHudRaiseAmount(), textureX, textureY, width, height);
@@ -119,7 +124,7 @@ public abstract class MixinGuiIngame extends Gui
     )
     private ItemStack dualhotbar$overrideSetHighlightingItemStack(InventoryPlayer instance)
     {
-        if (SharedMixinFields.switchHotbarKeybinding.isKeyDown())
+        if (SharedMixinFields.isDualHotbarEnabled() && SharedMixinFields.switchHotbarKeybinding.isKeyDown())
         {
             return mc.thePlayer.inventory.mainInventory[SharedMixinFields.secondaryHotbarCurrentIndex + (9 * SharedMixinFields.getSecondaryHotbarInventoryRow())];
         }
@@ -132,7 +137,7 @@ public abstract class MixinGuiIngame extends Gui
     )
     private int dualhotbar$raiseHotbarBackground(int y)
     {
-        return y - SharedMixinFields.getHudRaiseAmount();
+        return SharedMixinFields.isDualHotbarEnabled() ? y - SharedMixinFields.getHudRaiseAmount() : y;
     }
 
     @ModifyArg(method = "renderTooltip",
@@ -141,6 +146,6 @@ public abstract class MixinGuiIngame extends Gui
     )
     private int dualhotbar$raiseHotbarItems(int y)
     {
-        return y - SharedMixinFields.getHudRaiseAmount();
+        return SharedMixinFields.isDualHotbarEnabled() ? y - SharedMixinFields.getHudRaiseAmount() : y;
     }
 }
