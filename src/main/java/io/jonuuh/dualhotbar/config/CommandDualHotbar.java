@@ -110,28 +110,45 @@ public class CommandDualHotbar extends CommandBase
                 settings.saveCurrentValues();
                 break;
 
-            case setSwapActionDelay:
+            case setDelay:
                 if (isArgsLenUnexpected(args, 2))
                 {
                     break;
                 }
                 try
                 {
-                    int parsed = parseInt(args[1], 1, 3000);
+                    int parsed = parseInt(args[1], 2, 60);
                     settings.getIntSetting(SettingKey.ACTION_DELAY).setCurrentValue(parsed);
-                    int msToTicks = (int) Math.ceil((20 * (parsed / 1000F)));
-
-                    chatLogger.addSuccessLog("Set delay between phases of swap action to: " + parsed + "ms (" + msToTicks + " ticks).");
-                    if (parsed <= 50)
-                    {
-                        // TODO: test different delays on diff anticheats?
-                        chatLogger.addLog("USING A VERY LOW DELAY (depends on server) MAY CAUSE ANTICHEAT FLAGS AND/OR A BAN", EnumChatFormatting.DARK_RED);
-                    }
+                    int ticksToMs = parsed * 50;
+                    chatLogger.addSuccessLog("Set delay between phases of swap action to: " + parsed + " ticks (" + ticksToMs + "ms).");
+//                    if (parsed == 1)
+//                    {
+//                        chatLogger.addLog("⚠ Using a 1 tick delay may (depends on server) cause anticheat flags/bans.", EnumChatFormatting.RED);
+//                    }
                     settings.saveCurrentValues();
                 }
                 catch (NumberInvalidException e)
                 {
-                    chatLogger.addFailureLog("Invalid number. bounds = (1, 3000)");
+                    chatLogger.addFailureLog("Invalid number. bounds = (2, 60)");
+                }
+                break;
+
+            case setMaxRandomDelay:
+                if (isArgsLenUnexpected(args, 2))
+                {
+                    break;
+                }
+                try
+                {
+                    int parsed = parseInt(args[1], 0, 10);
+                    settings.getIntSetting(SettingKey.MAX_RANDOM_ACTION_DELAY).setCurrentValue(parsed);
+                    int ticksToMs = parsed * 50;
+                    chatLogger.addSuccessLog("Set max additional random delay between phases of swap action to: " + parsed + " ticks (" + ticksToMs + "ms).");
+                    settings.saveCurrentValues();
+                }
+                catch (NumberInvalidException e)
+                {
+                    chatLogger.addFailureLog("Invalid number. bounds = (0, 10)");
                 }
                 break;
 
@@ -256,8 +273,11 @@ public class CommandDualHotbar extends CommandBase
         components.add(new ChatComponentText(chatLogger.accentColor + "Is DualHotbar enabled:").appendSibling(
                 new ChatComponentText(chatLogger.mainColor + " " + settings.getBoolSetting(SettingKey.ENABLED).getCurrentValue())));
 
-        components.add(new ChatComponentText(chatLogger.accentColor + "Delay between phases of swap action:").appendSibling(
-                new ChatComponentText(chatLogger.mainColor + " " + settings.getIntSetting(SettingKey.ACTION_DELAY).getCurrentValue() + "ms")));
+        components.add(new ChatComponentText(chatLogger.accentColor + "Delay between phases:").appendSibling(
+                new ChatComponentText(chatLogger.mainColor + " " + settings.getIntSetting(SettingKey.ACTION_DELAY).getCurrentValue() + " ticks")));
+
+        components.add(new ChatComponentText(chatLogger.accentColor + "Max extra random delay between phases:").appendSibling(
+                new ChatComponentText(chatLogger.mainColor + " " + settings.getIntSetting(SettingKey.MAX_RANDOM_ACTION_DELAY).getCurrentValue() + " ticks")));
 
         components.add(new ChatComponentText(chatLogger.accentColor + "Base HUD raised amount:").appendSibling(
                 new ChatComponentText(chatLogger.mainColor + " " + settings.getIntSetting(SettingKey.MAIN_HUD_RAISE_AMOUNT).getCurrentValue() + "px")));
@@ -281,7 +301,8 @@ public class CommandDualHotbar extends CommandBase
     {
         displayConfig,
         setEnabled("<boolean>"),
-        setSwapActionDelay("<integer>ms"),
+        setDelay("<integer>ticks"),
+        setMaxRandomDelay("<integer>ticks"),
         setHudRaiseAmount("<integer>px"),
         setSecondaryHotbarScale("<double>%"),
         setDrawInventoryDuringSwap("<boolean>"),
@@ -302,7 +323,7 @@ public class CommandDualHotbar extends CommandBase
 
         private static String[] getNames()
         {
-            return new String[]{displayConfig.name(), setEnabled.name(), setSwapActionDelay.name(), setHudRaiseAmount.name(),
+            return new String[]{displayConfig.name(), setEnabled.name(), setDelay.name(), setMaxRandomDelay.name(), setHudRaiseAmount.name(),
                     setSecondaryHotbarScale.name(), setDrawInventoryDuringSwap.name(), setCombineSimilarItemStacks.name(),
                     setSecondaryHotbarInventoryRow.name()};
         }

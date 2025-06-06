@@ -52,7 +52,8 @@ public class DualHotbar
     {
         Settings settings = new Settings(modID);
         settings.put(SettingKey.ENABLED, new BoolSetting(true));
-        settings.put(SettingKey.ACTION_DELAY, new IntSetting(100));
+        settings.put(SettingKey.ACTION_DELAY, new IntSetting(2));
+        settings.put(SettingKey.MAX_RANDOM_ACTION_DELAY, new IntSetting(2));
         settings.put(SettingKey.MAIN_HUD_RAISE_AMOUNT, new IntSetting(11));
         settings.put(SettingKey.SECONDARY_HOTBAR_SCALE, new DoubleSetting(0.98));
         settings.put(SettingKey.DRAW_INVENTORY_DURING_SWAP, new BoolSetting(true));
