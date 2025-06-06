@@ -1,23 +1,22 @@
 package io.jonuuh.dualhotbar.event;
 
-import io.jonuuh.core.lib.util.ChatLogger;
-import io.jonuuh.dualhotbar.gui.GuiInventoryExt;
+import io.jonuuh.dualhotbar.config.SharedMixinFields;
+import io.jonuuh.dualhotbar.mixin.MixinGuiContainer;
 import io.jonuuh.dualhotbar.mixin.MixinKeyBinding;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 public class SwapAction
 {
     private final Minecraft mc;
-    private final GuiInventoryExt inventory;
     private int phase;
     private boolean hasNextPhase;
 
     public SwapAction()
     {
         this.mc = Minecraft.getMinecraft();
-        this.inventory = new GuiInventoryExt(mc.thePlayer);
         this.hasNextPhase = true;
     }
 
@@ -28,30 +27,21 @@ public class SwapAction
 
     public void performNextPhase()
     {
-        if (!hasNextPhase())
-        {
-            ChatLogger.INSTANCE.addFailureLog("Tried to perform next phase on finished SwapAction; This should never happen - please message @jonnuh on discord");
-            return;
-        }
-
-        if (phase == 0)
-        {
-            mc.displayGuiScreen(inventory);
-        }
         // Double check inventory is still open and wasn't manually closed; Inventory walk anticheat flagging precaution
-        else if (phase == 1 && mc.currentScreen == inventory)
+        if (phase == 0 && mc.currentScreen instanceof GuiInventory)
         {
-            inventory.swapItemStacksBetweenHotbars();
+            int inventoryStackSlotID = (9 * SharedMixinFields.getSecondaryHotbarInventoryRow()) + SharedMixinFields.secondaryHotbarCurrentIndex;
+            ((MixinGuiContainer) mc.currentScreen).dualhotbar$invokeHandleMouseClick(null, inventoryStackSlotID, SharedMixinFields.mainHotbarStartingIndex, 2);
         }
-        else if (phase == 2)
+        else if (phase == 1)
         {
             // Only close gui screen if inventory is still open
             // (could have been manually cancelled with esc/inv key between phase 1 and now)
-            if (mc.currentScreen == inventory)
+            if (mc.currentScreen instanceof GuiInventory)
             {
-//                System.out.println("inventory");
                 mc.thePlayer.closeScreen();
             }
+            // TODO: maaaaybe could flag inv walk due to not waiting a tick after gui close? probably not
             repressKeys();
             hasNextPhase = false;
             return;

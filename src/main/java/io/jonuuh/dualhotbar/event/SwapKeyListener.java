@@ -1,5 +1,6 @@
 package io.jonuuh.dualhotbar.event;
 
+import io.jonuuh.core.lib.util.logging.ChatLogger;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -13,12 +14,14 @@ public class SwapKeyListener
 {
     private final Minecraft mc;
     private final KeyBinding switchHotbarKeybinding;
+    private final ChatLogger chatLogger;
     private boolean isInitialKeyPress;
 
-    public SwapKeyListener()
+    public SwapKeyListener(ChatLogger chatLogger)
     {
         this.mc = Minecraft.getMinecraft();
         this.switchHotbarKeybinding = SharedMixinFields.switchHotbarKeybinding;
+        this.chatLogger = chatLogger;
         this.isInitialKeyPress = true;
     }
 
@@ -29,9 +32,6 @@ public class SwapKeyListener
         {
             return;
         }
-
-        // TODO: check if this event can fire while in a gui? should still keep check anyway just to be sure
-        // currentSwapAction == null check is probably not necessary? better safe than sorry though
 
         if (Keyboard.getEventKey() == switchHotbarKeybinding.getKeyCode() && SharedMixinFields.currentSwapAction == null)
         {
@@ -63,7 +63,7 @@ public class SwapKeyListener
                 if (inventoryStack != null || hotbarStack != null)
                 {
                     SharedMixinFields.currentSwapAction = new SwapAction();
-                    MinecraftForge.EVENT_BUS.register(new SwapActionHandler());
+                    MinecraftForge.EVENT_BUS.register(new SwapActionHandler(chatLogger));
                 }
             }
         }

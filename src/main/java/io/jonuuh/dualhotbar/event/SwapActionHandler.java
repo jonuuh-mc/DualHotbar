@@ -3,50 +3,62 @@ package io.jonuuh.dualhotbar.event;
 import io.jonuuh.core.lib.config.SettingsConfigurationAdapter;
 import io.jonuuh.core.lib.config.setting.Settings;
 import io.jonuuh.core.lib.config.setting.types.single.IntSetting;
+import io.jonuuh.core.lib.util.logging.ChatLogger;
+import io.jonuuh.dualhotbar.DualHotbar;
 import io.jonuuh.dualhotbar.config.SettingKey;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-public class SwapActionHandler
+class SwapActionHandler
 {
-    private final IntSetting actionDelayMsSetting;
+    private final ChatLogger chatLogger;
+    private final IntSetting actionDelaySetting;
+    private final IntSetting randomActionDelaySetting;
     private int ticks;
 
-    public SwapActionHandler()
+    public SwapActionHandler(ChatLogger chatLogger)
     {
-        Settings defaultSettings = SettingsConfigurationAdapter.INSTANCE.getDefaultCategorySettings();
-        this.actionDelayMsSetting = defaultSettings.getIntSetting(SettingKey.ACTION_DELAY);
+        this.chatLogger = chatLogger;
+        Settings defaultSettings = SettingsConfigurationAdapter.adapters.get(DualHotbar.modID).getDefaultCategorySettings();
+        this.actionDelaySetting = defaultSettings.getIntSetting(SettingKey.ACTION_DELAY);
+        this.randomActionDelaySetting = defaultSettings.getIntSetting(SettingKey.MAX_RANDOM_ACTION_DELAY);
     }
 
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.START)
+        if (event.phase == TickEvent.Phase.END)
         {
             return;
         }
 
+        if (ticks == 0)
+        {
+            chatLogger.addLog("Inventory keybinding ticked");
+            KeyBinding.onTick(Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode());
+        }
+
         ticks++;
 
-        if (SharedMixinFields.currentSwapAction != null)
+        if (SharedMixinFields.currentSwapAction.hasNextPhase())
         {
-            if (!SharedMixinFields.currentSwapAction.hasNextPhase())
-            {
-                ticks = 0;
-                SharedMixinFields.currentSwapAction = null;
-                MinecraftForge.EVENT_BUS.unregister(this);
-                return;
-            }
+            int tickDelay = actionDelaySetting.getCurrentValue();
+            int additionalRandomTickDelay = (int) (Math.random() * randomActionDelaySetting.getCurrentValue());
 
-            int msToTicks = (int) Math.ceil((20 * (actionDelayMsSetting.getCurrentValue() / 1000F)));
-
-            if (ticks % msToTicks == 0)
+            if (ticks % (tickDelay + additionalRandomTickDelay) == 0)
             {
-//                System.out.println("performing next phase");
                 SharedMixinFields.currentSwapAction.performNextPhase();
+                chatLogger.addLog("Added random +" + additionalRandomTickDelay + " ticks");
             }
+        }
+        else
+        {
+            SharedMixinFields.currentSwapAction = null;
+            MinecraftForge.EVENT_BUS.unregister(this);
         }
     }
 }
