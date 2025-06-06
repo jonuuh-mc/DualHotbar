@@ -5,7 +5,7 @@ import io.jonuuh.core.lib.config.setting.Settings;
 import io.jonuuh.core.lib.config.setting.types.single.BoolSetting;
 import io.jonuuh.core.lib.config.setting.types.single.DoubleSetting;
 import io.jonuuh.core.lib.config.setting.types.single.IntSetting;
-import io.jonuuh.core.lib.util.ChatLogger;
+import io.jonuuh.core.lib.util.logging.ChatLogger;
 import io.jonuuh.dualhotbar.config.CommandDualHotbar;
 import io.jonuuh.dualhotbar.config.SettingKey;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
@@ -25,28 +25,32 @@ public class DualHotbar
     public static final String modID = "dualhotbar";
     public static final String modName = "DualHotbar";
     public static final String version = "1.0.0";
+    private final ChatLogger chatLogger;
+
+    public DualHotbar()
+    {
+        this.chatLogger = new ChatLogger(modName, EnumChatFormatting.GOLD, EnumChatFormatting.GRAY);
+    }
 
     @Mod.EventHandler
     public void FMLPreInit(FMLPreInitializationEvent event)
     {
-        ChatLogger.createInstance(modName, EnumChatFormatting.GOLD, EnumChatFormatting.GRAY);
-        SettingsConfigurationAdapter.createInstance(event.getSuggestedConfigurationFile(), initMasterSettings());
+        SettingsConfigurationAdapter.addAdapter(modID, event.getSuggestedConfigurationFile(), initMasterSettings());
     }
 
     @Mod.EventHandler
     public void FMLInit(FMLInitializationEvent event)
     {
         ClientRegistry.registerKeyBinding(SharedMixinFields.switchHotbarKeybinding);
-        ClientCommandHandler.instance.registerCommand(new CommandDualHotbar());
+        ClientCommandHandler.instance.registerCommand(new CommandDualHotbar(chatLogger));
 
         MinecraftForge.EVENT_BUS.register(new GameOverlayStatusBarsModifier());
-        MinecraftForge.EVENT_BUS.register(new SwapKeyListener());
-
+        MinecraftForge.EVENT_BUS.register(new SwapKeyListener(chatLogger));
     }
 
     private Settings initMasterSettings()
     {
-        Settings settings = new Settings();
+        Settings settings = new Settings(modID);
         settings.put(SettingKey.ENABLED, new BoolSetting(true));
         settings.put(SettingKey.ACTION_DELAY, new IntSetting(100));
         settings.put(SettingKey.MAIN_HUD_RAISE_AMOUNT, new IntSetting(11));

@@ -37,9 +37,9 @@ public final class SharedMixinFields
             return false;
         }
 
-        if (SettingsConfigurationAdapter.INSTANCE != null)
+        if (hasAdapter())
         {
-            Settings defaultSettings = SettingsConfigurationAdapter.INSTANCE.getDefaultCategorySettings();
+            Settings defaultSettings = getAdapter().getDefaultCategorySettings();
             return defaultSettings.getBoolSetting(SettingKey.ENABLED).getCurrentValue();
         }
         return false;
@@ -47,9 +47,9 @@ public final class SharedMixinFields
 
     public static int getHudRaiseAmount()
     {
-        if (SettingsConfigurationAdapter.INSTANCE != null)
+        if (hasAdapter())
         {
-            Settings defaultSettings = SettingsConfigurationAdapter.INSTANCE.getDefaultCategorySettings();
+            Settings defaultSettings = getAdapter().getDefaultCategorySettings();
             return defaultSettings.getIntSetting(SettingKey.MAIN_HUD_RAISE_AMOUNT).getCurrentValue();
         }
         return 0;
@@ -57,9 +57,9 @@ public final class SharedMixinFields
 
     public static Double getSecondaryHotbarScale()
     {
-        if (SettingsConfigurationAdapter.INSTANCE != null)
+        if (hasAdapter())
         {
-            Settings defaultSettings = SettingsConfigurationAdapter.INSTANCE.getDefaultCategorySettings();
+            Settings defaultSettings = getAdapter().getDefaultCategorySettings();
             return defaultSettings.getDoubleSetting(SettingKey.SECONDARY_HOTBAR_SCALE).getCurrentValue();
         }
         return 0D;
@@ -67,9 +67,9 @@ public final class SharedMixinFields
 
     public static int getSecondaryHotbarInventoryRow()
     {
-        if (SettingsConfigurationAdapter.INSTANCE != null)
+        if (hasAdapter())
         {
-            Settings defaultSettings = SettingsConfigurationAdapter.INSTANCE.getDefaultCategorySettings();
+            Settings defaultSettings = getAdapter().getDefaultCategorySettings();
             return defaultSettings.getIntSetting(SettingKey.SECONDARY_HOTBAR_INVENTORY_ROW).getCurrentValue();
         }
         return 1;
@@ -77,11 +77,21 @@ public final class SharedMixinFields
 
     public static boolean getShouldCombineItemStacks()
     {
-        if (SettingsConfigurationAdapter.INSTANCE != null)
+        if (hasAdapter())
         {
-            Settings defaultSettings = SettingsConfigurationAdapter.INSTANCE.getDefaultCategorySettings();
+            Settings defaultSettings = getAdapter().getDefaultCategorySettings();
             return defaultSettings.getBoolSetting(SettingKey.COMBINE_SIMILAR_ITEMSTACKS).getCurrentValue();
         }
         return false;
+    }
+
+    private static boolean hasAdapter()
+    {
+        return SettingsConfigurationAdapter.hasAdapter(DualHotbar.modID);
+    }
+
+    private static SettingsConfigurationAdapter getAdapter()
+    {
+        return SettingsConfigurationAdapter.adapters.get(DualHotbar.modID);
     }
 }

@@ -17,7 +17,7 @@ plugins {
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: 'org.spongepowered.mixin'
 
-version = "1.0.0-beta" // Mod version
+version = "1.0.0-beta2" // Mod version
 group = "io.jonuuh.dualhotbar" // Match with src/main/java -> child dir
 archivesBaseName = "DualHotbar-1.8.9" // Name of compiled jar on build.
 
@@ -74,7 +74,7 @@ repositories {
 
 // TODO: can this be combined with lower dependencies block?
 dependencies {
-    implementation "io.jonuuh:core-1.8.9:0.0.1"
+    implementation "io.jonuuh:core-1.8.9:0.0.4"
 }
 
 // This is the configuration for the shadow plugin, which is used to add libraries to the jar.
@@ -90,6 +90,10 @@ shadowJar {
         exclude 'assets/core/**'
         exclude 'io/jonuuh/core/lib/gui/**'
         exclude 'io/jonuuh/core/lib/update/**'
+        exclude 'io/jonuuh/core/lib/config/command/**'
+        exclude 'io/jonuuh/core/lib/util/hypixel/**'
+//        exclude '**/Log4JLogger.java'
+//        exclude 'io/jonuuh/core/lib/util/logging/Log4JLogger.java'
     }
     configurations = [project.configurations.shade] // Adds the gradle configuration "shade" so we can use it.
     duplicatesStrategy DuplicatesStrategy.EXCLUDE // Prevents duplicates
@@ -102,7 +106,15 @@ shadowJar {
  * compile -> library only available at compile time (not accessible at runtime)
  */
 dependencies {
-    shade("io.jonuuh:core-1.8.9:0.0.1") {}
+    shade("io.jonuuh:core-1.8.9:0.0.4") {
+//        exclude 'assets/core/**'
+//        exclude module: 'assets/core'
+//        exclude module: 'gui'
+//        exclude 'io/jonuuh/core/lib/update/**'
+//        exclude 'io/jonuuh/core/lib/config/command/**'
+//        exclude 'io/jonuuh/core/lib/util/hypixel/**'
+//        exclude '**/Log4JLogger.java'
+    }
 
     shade('org.spongepowered:mixin:0.7.10-SNAPSHOT') {
         exclude module: 'launchwrapper'

@@ -2,7 +2,8 @@ package io.jonuuh.dualhotbar.config;
 
 import io.jonuuh.core.lib.config.SettingsConfigurationAdapter;
 import io.jonuuh.core.lib.config.setting.Settings;
-import io.jonuuh.core.lib.util.ChatLogger;
+import io.jonuuh.core.lib.util.logging.ChatLogger;
+import io.jonuuh.dualhotbar.DualHotbar;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -22,10 +23,10 @@ public class CommandDualHotbar extends CommandBase
     private final ChatLogger chatLogger;
     private final Settings settings;
 
-    public CommandDualHotbar()
+    public CommandDualHotbar(ChatLogger chatLogger)
     {
-        this.chatLogger = ChatLogger.INSTANCE;
-        this.settings = SettingsConfigurationAdapter.INSTANCE.getDefaultCategorySettings();
+        this.chatLogger = chatLogger;
+        this.settings = SettingsConfigurationAdapter.adapters.get(DualHotbar.modID).getDefaultCategorySettings();
     }
 
     /**
