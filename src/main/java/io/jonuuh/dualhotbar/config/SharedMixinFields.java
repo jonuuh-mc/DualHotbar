@@ -75,12 +75,12 @@ public final class SharedMixinFields
         return 1;
     }
 
-    public static boolean getShouldCombineItemStacks()
+    public static boolean getShouldDrawInventory()
     {
         if (hasAdapter())
         {
             Settings defaultSettings = getAdapter().getDefaultCategorySettings();
-            return defaultSettings.getBoolSetting(SettingKey.COMBINE_SIMILAR_ITEMSTACKS).getCurrentValue();
+            return defaultSettings.getBoolSetting(SettingKey.DRAW_INVENTORY_DURING_SWAP).getCurrentValue();
         }
         return false;
     }
@@ -90,7 +90,7 @@ public final class SharedMixinFields
         return SettingsConfigurationAdapter.hasAdapter(DualHotbar.modID);
     }
 
-    private static SettingsConfigurationAdapter getAdapter()
+    public static SettingsConfigurationAdapter getAdapter()
     {
         return SettingsConfigurationAdapter.adapters.get(DualHotbar.modID);
     }

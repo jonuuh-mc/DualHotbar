@@ -1,4 +1,4 @@
-package io.jonuuh.dualhotbar.mixin;
+package io.jonuuh.dualhotbar.mixin.gui;
 
 import io.jonuuh.core.lib.util.RenderUtils;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
@@ -57,11 +57,6 @@ public abstract class MixinGuiIngame extends Gui
             GL11.glTranslatef(i - 91, sr.getScaledHeight() - 22, 0);
             GL11.glScalef(scale, scale, 1);
             GL11.glTranslatef(-(i - 91), -(sr.getScaledHeight() - 22), 0);
-
-            // might be necessary when hotbar is full 1.0 size
-            // (hotbar selector texture bleeds over left/right edge)
-//            RenderUtils.scissorFromTopLeft(i - 91,
-//                    sr.getScaledHeight() - 22 + (22 - SharedMixinFields.getHudRaiseAmount()), 182, 22);
 
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

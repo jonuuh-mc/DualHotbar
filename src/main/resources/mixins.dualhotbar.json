@@ -7,12 +7,13 @@
   "compatibilityLevel": "JAVA_8",
   "mixinPriority": 1001,
   "client": [
-    "MixinGuiIngame",
-    "MixinGuiIngameForge",
     "MixinKeyBinding",
-    "MixinMinecraft"
+    "MixinMinecraft",
+    "gui.MixinGuiIngame",
+    "gui.MixinGuiIngameForge",
+    "gui.MixinGuiInventory"
   ],
   "mixins": [
-    "MixinGuiContainer"
+    "gui.MixinGuiContainer"
   ]
 }

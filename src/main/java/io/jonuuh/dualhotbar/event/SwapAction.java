@@ -1,8 +1,10 @@
 package io.jonuuh.dualhotbar.event;
 
+import io.jonuuh.core.lib.config.setting.types.single.BoolSetting;
+import io.jonuuh.dualhotbar.config.SettingKey;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
-import io.jonuuh.dualhotbar.mixin.MixinGuiContainer;
 import io.jonuuh.dualhotbar.mixin.MixinKeyBinding;
+import io.jonuuh.dualhotbar.mixin.gui.MixinGuiContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
@@ -12,12 +14,14 @@ import org.lwjgl.input.Keyboard;
 public class SwapAction
 {
     private final Minecraft mc;
+    private final BoolSetting combineStacksSetting;
     private int phase;
     private boolean hasNextPhase;
 
     public SwapAction()
     {
         this.mc = Minecraft.getMinecraft();
+        this.combineStacksSetting = SharedMixinFields.getAdapter().getDefaultCategorySettings().getBoolSetting(SettingKey.COMBINE_SIMILAR_ITEMSTACKS);
         this.hasNextPhase = true;
     }
 
@@ -38,7 +42,7 @@ public class SwapAction
             int clickType = 2;
 
             // For "refill"/"combine" behavior (shift click on item stack in inventory)
-            if (SharedMixinFields.getShouldCombineItemStacks())
+            if (combineStacksSetting.getCurrentValue())
             {
                 ItemStack inventoryStack = mc.thePlayer.inventory.mainInventory[inventoryStackSlotID];
                 ItemStack hotbarStack = mc.thePlayer.getHeldItem();

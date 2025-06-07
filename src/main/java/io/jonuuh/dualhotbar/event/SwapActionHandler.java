@@ -1,10 +1,8 @@
 package io.jonuuh.dualhotbar.event;
 
-import io.jonuuh.core.lib.config.SettingsConfigurationAdapter;
 import io.jonuuh.core.lib.config.setting.Settings;
 import io.jonuuh.core.lib.config.setting.types.single.IntSetting;
 import io.jonuuh.core.lib.util.logging.ChatLogger;
-import io.jonuuh.dualhotbar.DualHotbar;
 import io.jonuuh.dualhotbar.config.SettingKey;
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
 import net.minecraft.client.Minecraft;
@@ -23,7 +21,7 @@ class SwapActionHandler
     public SwapActionHandler(ChatLogger chatLogger)
     {
         this.chatLogger = chatLogger;
-        Settings defaultSettings = SettingsConfigurationAdapter.adapters.get(DualHotbar.modID).getDefaultCategorySettings();
+        Settings defaultSettings = SharedMixinFields.getAdapter().getDefaultCategorySettings();
         this.actionDelaySetting = defaultSettings.getIntSetting(SettingKey.ACTION_DELAY);
         this.randomActionDelaySetting = defaultSettings.getIntSetting(SettingKey.MAX_RANDOM_ACTION_DELAY);
     }
@@ -47,7 +45,7 @@ class SwapActionHandler
         if (SharedMixinFields.currentSwapAction.hasNextPhase())
         {
             int tickDelay = actionDelaySetting.getCurrentValue();
-            int additionalRandomTickDelay = (int) (Math.random() * randomActionDelaySetting.getCurrentValue());
+            int additionalRandomTickDelay = (int) (Math.random() * (randomActionDelaySetting.getCurrentValue() + 1));
 
             if (ticks % (tickDelay + additionalRandomTickDelay) == 0)
             {

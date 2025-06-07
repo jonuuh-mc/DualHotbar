@@ -1,4 +1,4 @@
-package io.jonuuh.dualhotbar.mixin;
+package io.jonuuh.dualhotbar.mixin.gui;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;

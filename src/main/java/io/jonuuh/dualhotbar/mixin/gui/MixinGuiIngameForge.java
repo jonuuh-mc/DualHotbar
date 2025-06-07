@@ -1,4 +1,4 @@
-package io.jonuuh.dualhotbar.mixin;
+package io.jonuuh.dualhotbar.mixin.gui;
 
 import io.jonuuh.dualhotbar.config.SharedMixinFields;
 import net.minecraft.client.Minecraft;
