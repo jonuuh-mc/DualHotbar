@@ -6,6 +6,7 @@ import io.jonuuh.dualhotbar.mixin.MixinKeyBinding;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
 
 public class SwapAction
@@ -31,7 +32,25 @@ public class SwapAction
         if (phase == 0 && mc.currentScreen instanceof GuiInventory)
         {
             int inventoryStackSlotID = (9 * SharedMixinFields.getSecondaryHotbarInventoryRow()) + SharedMixinFields.secondaryHotbarCurrentIndex;
-            ((MixinGuiContainer) mc.currentScreen).dualhotbar$invokeHandleMouseClick(null, inventoryStackSlotID, SharedMixinFields.mainHotbarStartingIndex, 2);
+
+            // For normal swap behavior (net.minecraft.client.gui.inventory.GuiContainer.checkHotbarKeys)
+            int clickedButton = SharedMixinFields.mainHotbarStartingIndex;
+            int clickType = 2;
+
+            // For "refill"/"combine" behavior (shift click on item stack in inventory)
+            if (SharedMixinFields.getShouldCombineItemStacks())
+            {
+                ItemStack inventoryStack = mc.thePlayer.inventory.mainInventory[inventoryStackSlotID];
+                ItemStack hotbarStack = mc.thePlayer.getHeldItem();
+
+                if (inventoryStack != null && inventoryStack.isItemEqual(hotbarStack))
+                {
+                    clickedButton = 0;
+                    clickType = 1;
+                }
+            }
+
+            ((MixinGuiContainer) mc.currentScreen).dualhotbar$invokeHandleMouseClick(null, inventoryStackSlotID, clickedButton, clickType);
         }
         else if (phase == 1)
         {
